@@ -1,4 +1,19 @@
-import { getBrowser, getConfig, getOptions } from './utils.js';
+// import { getBrowser, getConfig, getOptions } from './utils.js';
+
+async function getConfig() {
+  const result = await getBrowser().storage.local.get('userConfig');
+  return result.userConfig || { entries: [] };
+}
+async function getOptions() {
+  const result = await getBrowser().storage.local.get('userOptions');
+  return result.userOptions || { closeNewTabsToggle: true };
+}
+function getBrowser() {
+  if (typeof browser !== 'undefined') {
+    return browser;
+  } else return chrome;
+}
+
 
 function matchesDomain(url, domain) {
   try {
@@ -14,8 +29,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const userOptions = await getOptions();
 
   const list = document.querySelector('#entriesList');
-  const closeNewTabsToggle = document.querySelector('#closeNewTabs');
-  closeNewTabsToggle.checked = userOptions.closeNewTabsToggle;
+  // const closeNewTabsToggle = document.querySelector('#closeNewTabs');
+  // closeNewTabsToggle.checked = userOptions.closeNewTabsToggle;
   // list.innerHTML = '';
 
   for (let index = 0; index < config.entries.length; index++) {
@@ -23,7 +38,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const li = document.createElement('li');
 
     // Get the number of currently open tabs for this domain
-    const openTabs = await chrome.tabs.query({});
+    const openTabs = await getBrowser().tabs.query({});
     console.log("no of total openTabs :", openTabs)
     const domainTabCount = openTabs.filter(tab => matchesDomain(tab.url, entry.domain)).length;
     console.log("no of domainTabCount :", domainTabCount)
@@ -94,6 +109,8 @@ function getRemoveButton(element, config, index) {
   // accept index
   const removeBtn = document.createElement('button');
   removeBtn.textContent = 'Remove';
+  removeBtn.classList.add('remove'); // <-- add the class here
+
   removeBtn.addEventListener('click', async (e) => {
     e.stopPropagation();
     config.entries.splice(index, 1);
@@ -108,39 +125,39 @@ function getRemoveButton(element, config, index) {
   return removeBtn;
 }
 
-document
-  .querySelector('#closeNewTabs')
-  .addEventListener('change', async (event) => {
-    const userOptions = await getOptions();
+// document
+//   .querySelector('#closeNewTabs')
+//   .addEventListener('change', async (event) => {
+//     const userOptions = await getOptions();
 
-    userOptions.closeNewTabsToggle = event.target.checked;
+//     userOptions.closeNewTabsToggle = event.target.checked;
 
-    await getBrowser().storage.local.set({ userOptions: userOptions });
-  });
+//     await getBrowser().storage.local.set({ userOptions: userOptions });
+//   });
 
 
-// Load saved option and set radio selection
-async function loadTabCloseOption() {
-  const userOptions = await getOptions();
-  const closeOption = userOptions.closeNewTabsToggle ? 'new' : 'old';
+// // Load saved option and set radio selection
+// async function loadTabCloseOption() {
+//   const userOptions = await getOptions();
+//   const closeOption = userOptions.closeNewTabsToggle ? 'new' : 'old';
 
-  if (closeOption === 'new') {
-    document.querySelector('#closeNewTabs').checked = true;
-  } else {
-    document.querySelector('#closeOldTabs').checked = true;
-  }
-}
+//   if (closeOption === 'new') {
+//     document.querySelector('#closeNewTabs').checked = true;
+//   } else {
+//     document.querySelector('#closeOldTabs').checked = true;
+//   }
+// }
 
-// Listen for change on both radio buttons
-document.querySelectorAll('input[name="tabCloseOption"]').forEach((radio) => {
-  radio.addEventListener('change', async (event) => {
-    const userOptions = await getOptions();
+// // Listen for change on both radio buttons
+// document.querySelectorAll('input[name="tabCloseOption"]').forEach((radio) => {
+//   radio.addEventListener('change', async (event) => {
+//     const userOptions = await getOptions();
 
-    userOptions.closeNewTabsToggle = event.target.value === 'new';
+//     userOptions.closeNewTabsToggle = event.target.value === 'new';
 
-    await getBrowser().storage.local.set({ userOptions });
-  });
-});
+//     await getBrowser().storage.local.set({ userOptions });
+//   });
+// });
 
-// Initialize on page load
-loadTabCloseOption();
+// // Initialize on page load
+// loadTabCloseOption();

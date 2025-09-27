@@ -1,4 +1,20 @@
-import { getBrowser, getConfig, getOptions } from './utils.js';
+// import { getBrowser, getConfig, getOptions } from './utils.js';
+// importScripts("utils.js");
+
+async function getConfig() {
+  const result = await getBrowser().storage.local.get('userConfig');
+  return result.userConfig || { entries: [] };
+}
+async function getOptions() {
+  const result = await getBrowser().storage.local.get('userOptions');
+  return result.userOptions || { closeNewTabsToggle: true };
+}
+function getBrowser() {
+  if (typeof browser !== 'undefined') {
+    return browser;
+  } else return chrome;
+}
+
 
 // Helper: check if URL matches domain or subdomain
 //todo perhaps make the entries a MAP to fascilitate faster searchings
@@ -45,9 +61,9 @@ getBrowser().tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
             // Send message to active tab to show modal
             try {
-              const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+              const tabs = await getBrowser().tabs.query({ active: true, currentWindow: true });
               console.log("Active Tab :", tabs)
-              chrome.tabs.sendMessage(tabs[0].id, {
+              getBrowser().tabs.sendMessage(tabs[0].id, {
                 type: "showTabLimitModal",
                 domain: entry.domain,
                 count: openTabs.length
@@ -88,15 +104,26 @@ getBrowser().tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   }
 });
 
-getBrowser().action.onClicked.addListener(() => {
+console.log("getBrowser() ::", getBrowser())
+getBrowser().browserAction.onClicked.addListener(() => {
+  console.log("clicking to open config page ")
   // Opens the extension options page
   getBrowser().runtime.openOptionsPage();
 });
 
+// In background.js
+// getBrowser().tabs.query({ active: true, currentWindow: true }, tabs => {
+//   console.log("from background.js , trying to load content script")
+//   // getBrowser().tabs.executeScript(tabs[0].id, { file: "content.js" });
+//   chrome.scripting.executeScript({
+//     target: { tabId: tabs[0].id },
+//     files: ["content.js"]
+//   });
+// });
 
-// chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
+// getBrowser().runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
 //   if (msg.type === "checkTabLimit") {
-//     // const allTabs = await chrome.tabs.query({});
+//     // const allTabs = await getBrowser().tabs.query({});
 //     //  const isMatchedDomain = matchesDomain(tab.url, msg.domain)
 //     // const domainTabs = allTabs.filter(tab => new URL(tab.url).hostname === msg.domain);
 //     // const MAX_TABS = 5; // set your limit

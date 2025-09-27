@@ -1,3 +1,10 @@
+// import { getBrowser, getConfig, getOptions } from './utils.js';
+function getBrowser() {
+    if (typeof browser !== 'undefined') {
+        return browser;
+    } else return chrome;
+}
+console.log("content.js loaded ")
 // document.addEventListener('click', async (e) => {
 
 //     console.log("from content : click intercepted")
@@ -11,7 +18,7 @@
 //     e.preventDefault(); // stop new tab from opening
 
 //     // // Ask background how many tabs exist for this domain
-//     // const response = await chrome.runtime.sendMessage({
+//     // const response = await getBrowser().runtime.sendMessage({
 //     //     type: "checkTabLimit",
 //     //     domain: new URL(link.href).hostname
 //     // });
@@ -43,7 +50,7 @@
 // });
 
 // Listener for background messages (e.g., right-click new tab)
-chrome.runtime.onMessage.addListener((msg) => {
+getBrowser().runtime.onMessage.addListener((msg) => {
     if (msg.type === "showTabLimitModal") {
         showModalOnPage(msg.domain, msg.count);
     }

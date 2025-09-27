@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Extension Options</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Press+Start+2P"
+    rel="stylesheet"
+  />
+  <link
+    href="options.css"
+    rel="stylesheet"
+  />
+  </head>
+
+<body>
+  <h2>This is local version</h2>
+  <h2>Ultimate Tab Limiter</h2>
+  <div style="display: flex; flex-direction: column; padding: 2rem">
+    <div style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          text-align: center;
+        ">
+      <label>Domain:</label>
+      <input
+        type="text"
+        id="domain"
+      />
+      </div>
+    <div style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          text-align: center;
+        ">
+      <label>Max Tabs:</label>
+      <input
+        type="number"
+        id="number"
+      />
+      </div>
+      </div>
+      <button id="addEntryBtn">Add Entry</button>
+      <h3>Options</h3>
+  <div style="
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        text-align: center;
+      ">
+    <h3>Tab Closing Behavior</h3>
+    <div style="display: flex; flex-direction: column; gap: 0.5rem; padding: 0 2rem;">
+      <label>
+        <input
+          type="radio"
+          name="tabCloseOption"
+          value="new"
+          id="closeNewTabs"
+        />
+        Close the newly opened tab when limit is reached
+      </label>
+      <label>
+        <input
+          type="radio"
+          name="tabCloseOption"
+          value="old"
+          id="closeOldTabs"
+        />
+        Close the oldest tab when limit is reached
+      </label>
+    </div>
+    <!-- <label
+        for="closeNewTabs"
+        class="img-toggle"
+        title="If the switch is toggled ON - closes new tabs; If the switch is toggled OFF, closes the oldest tab."
+        >Close new tabs:
+        <input type="checkbox" id="closeNewTabs" />
+        <div class="switches-img">
+          <img src="img/switch-off.png" />
+          <img src="img/switch-on.png" />
+        </div>
+      </label> -->
+      </div>
+
+  <h3>Entries</h3>
+  <!-- <ul id="entriesList"></ul> -->
+  
+  <ul
+    id="entriesList"
+    style="list-style: none; padding: 0; margin: 0;"
+  >
+    <li style="display: flex; font-weight: bold; padding: 5px 0; border-bottom: 1px solid #ccc;">
+      <span style="flex: 2;">Domain</span>
+      <span style="flex: 1; text-align: center;">Allowed Tabs</span>
+      <span style="flex: 1; text-align: center;">Currently Open</span>
+      <span style="flex: 0 0 50px;"></span> <!-- For remove button -->
+    </li>
+  </ul>
+  <script
+    type="module"
+    src="options.js"
+  ></script>
+  </body>
+
+</html>

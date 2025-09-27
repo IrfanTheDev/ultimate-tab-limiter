@@ -1,196 +1,190 @@
-/* Firefox theme colors */
 :root {
-  color-scheme: light dark;
-  --bg-color: Canvas;
-  --text-color: CanvasText;
-  --accent-color: Highlight;
-  --accent-text-color: HighlightText;
+  --bg: #f5f7fb;
+  --card-bg: #ffffff;
+  --border: #e5e7eb;
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --text: #111827;
+  --muted: #6b7280;
+  --radius: 12px;
+  --shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
-/* General body styling */
 body {
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  font-family: 'Press Start 2P', monospace, sans-serif;
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.container {
+  max-width: 720px;
+  margin: auto;
+  padding: 2rem 1rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 2rem;
+  gap: 1.5rem;
+}
+
+header {
   text-align: center;
-}
-
-/* Header */
-h2 {
-  margin-bottom: 1.5rem;
-  font-size: 1.5rem;
-}
-
-/* Form styling */
-label {
-  display: block;
   margin-bottom: 1rem;
-  font-size: 0.9rem;
+}
+header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+header p {
+  margin: 0.3rem 0 0;
+  color: var(--muted);
 }
 
+/* Card style */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.card.highlight {
+  border-left: 5px solid var(--primary);
+}
+
+/* Form fields */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--muted);
+}
 input {
-  margin-left: 0.5rem;
-  padding: 0.3rem 0.5rem;
-  border: 2px solid var(--text-color);
-  border-radius: 4px;
-  background-color: var(--bg-color);
-  color: var(--text-color);
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
 }
-
 input:focus {
-  outline: 2px solid var(--accent-color);
+  outline: 2px solid var(--primary);
+  border-color: var(--primary);
 }
 
-/* Button styling */
-button {
-  padding: 0.5rem 1rem;
-  font-family: inherit;
-  font-size: 0.9rem;
-  color: var(--accent-text-color);
-  background-color: var(--accent-color);
+/* Buttons */
+button.primary {
+  align-self: flex-start;
+  padding: 0.6rem 1.2rem;
+  background: var(--primary);
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: transform 0.1s ease-in-out;
+  transition: background 0.2s, transform 0.1s;
+}
+button.primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+}
+button.remove {
+  background-color: #ef4444; /* nice red */
+  color: #ffffff; /* white text */
+  border: none;
+  padding: 0.4rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
 }
 
-button:hover {
-  transform: scale(1.05);
+button.remove:hover {
+  background-color: #dc2626; /* darker red on hover */
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
-/* List styling */
-ul {
-  list-style-type: none;
-  padding: 0;
-  margin-top: 2rem;
-  width: 50vw;
-  min-width: 400px;
-  max-width: 800px;
+button.remove:active {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
-ul li {
-  padding: 0.5rem;
-  margin-bottom: 0.5rem;
-  background-color: var(--bg-color);
-  border: 2px solid var(--text-color);
-  border-radius: 4px;
-  font-family: inherit;
-  transform: scale(1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: transform 0.2s ease, background-color 0.2s ease;
-}
 
-/* Animation class for new entries */
-li.new-entry {
-  animation: pop 0.4s ease forwards;
-}
-
-@keyframes pop {
-  0% {
-    transform: scale(0);
-    background-color: var(--accent-color);
-    color: var(--accent-text-color);
-  }
-  60% {
-    transform: scale(1.2);
-    background-color: var(--accent-color);
-    color: var(--accent-text-color);
-  }
-  100% {
-    transform: scale(1);
-    background-color: var(--bg-color);
-    color: var(--text-color);
-  }
-}
-
-/* Add Entry button arcade pulse */
-button#addEntryBtn:hover {
-  animation: button-pulse 1s infinite alternate;
-}
-
-/* Pulse keyframes */
-@keyframes button-pulse {
-  0% {
-    background-color: var(--accent-color);
-    color: var(--accent-text-color);
-    box-shadow: 0 0 2px var(--accent-color);
-    transform: scale(1);
-  }
-  50% {
-    background-color: var(--accent-color);
-    color: var(--accent-text-color);
-    box-shadow: 0 0 8px var(--accent-color);
-    transform: scale(1.05);
-  }
-  100% {
-    background-color: var(--accent-color);
-    color: var(--accent-text-color);
-    box-shadow: 0 0 2px var(--accent-color);
-    transform: scale(1);
-  }
-}
-
-@keyframes dissolve {
-  0% {
-    filter: brightness(1);
-    clip-path: inset(0% 0% 0% 0%);
-    opacity: 1;
-  }
-  100% {
-    filter: brightness(0);
-    clip-path: inset(100% 0% 0% 0%);
-    opacity: 0;
-  }
-}
-
-li.undertale-death {
-  animation: dissolve 0.25s steps(20) forwards;
-}
-
+/* Toggle switches */
 .toggle {
-  background-image: 'img/switch-off.png';
-  background-size: cover;
-  position: relative;
-  cursor: pointer;
-  transition: all 0.5s ease-in-out;
-  box-shadow: 6px 6px 10px #0000003d;
-}
-
-#checkbox:checked + .toggle {
-  background-size: cover;
-}
-
-.img-toggle {
   display: flex;
-  flex-direction: row;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
+  gap: 0.6rem;
+  cursor: pointer;
 }
-
-.img-toggle input {
-  display: none; /* hide the checkbox */
-}
-
-.img-toggle .switches-img img {
-  display: none; /* hide all by default */
-}
-
-.img-toggle .switches-img img:first-child {
-  display: flex; /* show the first image (off) */
-}
-
-/* when checked, hide first image and show second */
-.img-toggle input:checked + .switches-img img:first-child {
+.toggle input {
   display: none;
 }
-.img-toggle input:checked + .switches-img img:last-child {
-  display: flex;
+.slider {
+  width: 36px;
+  height: 20px;
+  background: #ddd;
+  border-radius: 20px;
+  position: relative;
+  transition: background 0.3s;
 }
+.slider::before {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 2px;
+  left: 2px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+.toggle input:checked + .slider {
+  background: var(--primary);
+}
+.toggle input:checked + .slider::before {
+  transform: translateX(16px);
+}
+.label-text {
+  font-size: 0.95rem;
+}
+
+/* Entries list */
+.entries {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.entries li {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  align-items: center;
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid var(--border);
+}
+.entries li.header {
+  font-weight: 600;
+  color: var(--muted);
+}
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 999px;
+}
+.badge.green { background: #dcfce7; color: #15803d; }
+.badge.red { background: #fee2e2; color: #b91c1c; }

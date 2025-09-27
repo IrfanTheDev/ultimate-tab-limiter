@@ -22,9 +22,11 @@ getBrowser().tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   const config = await getConfig();
 
   for (const entry of config.entries) {
-    if (matchesDomain(tab.url, entry.domain)) {
+    const isMatchedDomain = matchesDomain(tab.url, entry.domain)
+    console.log("isMatchedDomain : ", isMatchedDomain)
+    if (isMatchedDomain) {
       const openTabs = await getTabsForDomain(entry.domain);
-
+      console.log("no of openTabs : ", openTabs)
       if (openTabs.length > entry.number) {
         console.log(
           `Tab limit exceeded for ${entry.domain}. Closing tab ${tab.id}`
@@ -32,14 +34,46 @@ getBrowser().tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         try {
           const userOptions = await getOptions();
           if (userOptions.closeNewTabsToggle) {
-            await getBrowser().tabs.remove(tab.id);
+            // await getBrowser().tabs.remove(tab.id);
+
+            // Instead of closing immediately, warn user
+            // chrome.notifications.create({
+            //   type: "basic",
+            //   iconUrl: "icons/16px.png",
+            //   title: "Tab Limit Warning",
+            //   message: `You already have ${openTabs.length} tabs open for ${entry.domain}.`
+            // });
+
+            await chrome.scripting.executeScript({
+              target: { tabId: tab.id },
+              func: (domain, count) => {
+                alert(`Tab limit reached!\nYou already have ${count} tabs open for ${domain}.`);
+              },
+              args: [entry.domain, openTabs.length]
+            });
           } else {
             console.log(openTabs);
             //lowest tab id is the oldest
             const lowest = openTabs.reduce((min, tab) =>
               tab.id < min.id ? tab : min
             );
-            await getBrowser().tabs.remove(lowest.id);
+            // await getBrowser().tabs.remove(lowest.id);
+
+            // Instead of closing immediately, warn user
+            // chrome.notifications.create({
+            //   type: "basic",
+            //   iconUrl: "icons/16px.png",
+            //   title: "Tab Limit Warning",
+            //   message: `Too many tabs for ${entry.domain}. Oldest tab (ID: ${lowest.id}) would be closed.`
+            // });
+
+            await chrome.scripting.executeScript({
+              target: { tabId: tab.id },
+              func: (domain, oldestId, count) => {
+                alert(`Tab limit exceeded for ${domain}.\n(${count} tabs open)\nOldest tab (ID: ${oldestId}) would be closed.`);
+              },
+              args: [entry.domain, lowest.id, openTabs.length]
+            });
           }
         } catch (err) {
           console.warn('Failed to close tab:', err);
@@ -54,4 +88,20 @@ getBrowser().tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 getBrowser().action.onClicked.addListener(() => {
   // Opens the extension options page
   getBrowser().runtime.openOptionsPage();
+});
+
+
+chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
+  if (msg.type === "checkTabLimit") {
+    // const allTabs = await chrome.tabs.query({});
+    //  const isMatchedDomain = matchesDomain(tab.url, msg.domain)
+    // const domainTabs = allTabs.filter(tab => new URL(tab.url).hostname === msg.domain);
+    // const MAX_TABS = 5; // set your limit
+    sendResponse({
+      // limitReached: domainTabs.length >= MAX_TABS,
+      limitReached: 5,
+      domain: msg.domain
+    });
+    return true; // keep message channel open for async
+  }
 });

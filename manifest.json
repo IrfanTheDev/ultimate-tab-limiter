@@ -1,0 +1,55 @@
+{
+  "manifest_version": 3,
+  "name": "Ultimate Tab Limiter",
+  "version": "1.0.0",
+  "description": "Allows users to customize how many tabs they want per domain and allows them to select the closing behavior",
+  "icons": {
+    "16": "icons/16px.png",
+    "32": "icons/32px.png"
+  },
+  "permissions": [
+    "storage",
+    "tabs",
+    "notifications",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "action": {
+    "default_icon": {
+      "16": "icons/16px.png",
+      "32": "icons/32px.png"
+    },
+    "default_title": "Click to configure"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "cal1br@ultimate-tab-limiter",
+      "strict_min_version": "109.0"
+    },
+    "gecko_android": {
+      "id": "cal1br@ultimate-tab-limiter",
+      "strict_min_version": "109.0"
+    }
+  }
+}

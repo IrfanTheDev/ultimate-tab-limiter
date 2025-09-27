@@ -42,6 +42,20 @@ getBrowser().tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
               title: "Tab Limit Warning",
               message: `You already have ${openTabs.length} tabs open for ${entry.domain}.`
             });
+
+            // Send message to active tab to show modal
+            try {
+              const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+              console.log("Active Tab :", tabs)
+              chrome.tabs.sendMessage(tabs[0].id, {
+                type: "showTabLimitModal",
+                domain: entry.domain,
+                count: openTabs.length
+              });
+            } catch (err) {
+              // No content script in this tab, ignore
+              console.warn("Could not send message to tab:", err);
+            }
             await getBrowser().tabs.remove(tab.id);
 
           } else {
@@ -56,7 +70,7 @@ getBrowser().tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
               type: "basic",
               iconUrl: "icons/16px.png",
               title: "Tab Limit Warning",
-              message: `Too many tabs for ${entry.domain}. Oldest tab (ID: ${lowest.id}) would be closed.`
+              message: `Too many tabs for ${entry.domain}. Oldest tab (${lowest.title} ID: ${lowest.id}) would be closed.`
             });
 
             await getBrowser().tabs.remove(lowest.id);

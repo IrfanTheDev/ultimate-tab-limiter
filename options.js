@@ -1,5 +1,14 @@
 import { getBrowser, getConfig, getOptions } from './utils.js';
 
+function matchesDomain(url, domain) {
+  try {
+    const u = new URL(url);
+    return u.hostname === domain || u.hostname.endsWith('.' + domain);
+  } catch {
+    return false;
+  }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   const config = await getConfig();
   const userOptions = await getOptions();
@@ -7,14 +16,45 @@ document.addEventListener('DOMContentLoaded', async () => {
   const list = document.querySelector('#entriesList');
   const closeNewTabsToggle = document.querySelector('#closeNewTabs');
   closeNewTabsToggle.checked = userOptions.closeNewTabsToggle;
-  list.innerHTML = '';
+  // list.innerHTML = '';
 
-  config.entries.forEach((entry, index) => {
+  for (let index = 0; index < config.entries.length; index++) {
+    const entry = config.entries[index];
     const li = document.createElement('li');
-    li.textContent = `${entry.domain} - ${entry.number}`;
+
+    // Get the number of currently open tabs for this domain
+    const openTabs = await chrome.tabs.query({});
+    console.log("no of total openTabs :", openTabs)
+    const domainTabCount = openTabs.filter(tab => matchesDomain(tab.url, entry.domain)).length;
+    console.log("no of domainTabCount :", domainTabCount)
+    // li.textContent = `${entry.domain} - ${entry.number} - Open: ${domainTabCount}`;
+    // li.appendChild(getRemoveButton(li, config, index));
+    // list.appendChild(li);
+
+    li.style.display = 'flex';
+    li.style.padding = '5px 0';
+    li.style.borderBottom = '1px solid #eee';
+
+    const domainSpan = document.createElement('span');
+    domainSpan.style.flex = '2';
+    domainSpan.textContent = entry.domain;
+
+    const allowedSpan = document.createElement('span');
+    allowedSpan.style.flex = '1';
+    allowedSpan.style.textAlign = 'center';
+    allowedSpan.textContent = entry.number;
+
+    const openSpan = document.createElement('span');
+    openSpan.style.flex = '1';
+    openSpan.style.textAlign = 'center';
+    openSpan.textContent = domainTabCount;
+
+    li.appendChild(domainSpan);
+    li.appendChild(allowedSpan);
+    li.appendChild(openSpan);
     li.appendChild(getRemoveButton(li, config, index));
     list.appendChild(li);
-  });
+  };
 });
 
 // Add new domain-number entry
@@ -77,3 +117,30 @@ document
 
     await getBrowser().storage.local.set({ userOptions: userOptions });
   });
+
+
+// Load saved option and set radio selection
+async function loadTabCloseOption() {
+  const userOptions = await getOptions();
+  const closeOption = userOptions.closeNewTabsToggle ? 'new' : 'old';
+
+  if (closeOption === 'new') {
+    document.querySelector('#closeNewTabs').checked = true;
+  } else {
+    document.querySelector('#closeOldTabs').checked = true;
+  }
+}
+
+// Listen for change on both radio buttons
+document.querySelectorAll('input[name="tabCloseOption"]').forEach((radio) => {
+  radio.addEventListener('change', async (event) => {
+    const userOptions = await getOptions();
+
+    userOptions.closeNewTabsToggle = event.target.value === 'new';
+
+    await getBrowser().storage.local.set({ userOptions });
+  });
+});
+
+// Initialize on page load
+loadTabCloseOption();

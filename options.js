@@ -72,6 +72,52 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 });
 
+// Save Global Tab Limit
+async function saveGlobalLimit() {
+  const globalInput = document.getElementById('globalLimit');
+  const globalLimit = parseInt(globalInput.value, 10);
+
+  if (isNaN(globalLimit) || globalLimit <= 0) {
+    alert('Please enter a valid number for Global Tab Limit.');
+    return;
+  }
+
+  // Get existing config from storage
+  const storage = await getBrowser().storage.local.get('userConfig');
+  const config = storage.userConfig || {};
+
+  // Update globalLimit
+  config.globalLimit = globalLimit;
+
+  // Save back to storage
+  await getBrowser().storage.local.set({ userConfig: config });
+
+  // Optional: feedback to user
+  globalInput.classList.add('saved');
+  setTimeout(() => globalInput.classList.remove('saved'), 800);
+
+  console.log('Global Tab Limit saved:', globalLimit);
+}
+
+// Attach event listener
+document.addEventListener('DOMContentLoaded', async () => {
+  const globalInput = document.getElementById('globalLimit');
+  try {
+    const storage = await getBrowser().storage.local.get('userConfig');
+    const config = storage.userConfig || {};
+
+    if (config.globalLimit) {
+      globalInput.value = config.globalLimit;
+    }
+
+    // Attach event listener to save when changed
+    globalInput.addEventListener('change', saveGlobalLimit);
+  } catch (err) {
+    console.error('Failed to load global tab limit:', err);
+  }
+});
+
+
 // Add new domain-number entry
 document.querySelector('#addEntryBtn').addEventListener('click', async () => {
   const domain = document.querySelector('#domain').value.trim();

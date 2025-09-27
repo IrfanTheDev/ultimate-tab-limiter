@@ -29,7 +29,7 @@ Do you find yourself opening dozens of tabs and losing track of what’s importa
 
 ## Preview
 
-<img width="957" height="654" alt="image" src="https://github.com/user-attachments/assets/8b802e29-3ada-41db-8422-616fb84114c9" />
+<img width="957" height="654" alt="image" src="docs/ScreenShot-Home.png" />
 
 
 ## Feedback & Contribution

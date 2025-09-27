@@ -9,7 +9,11 @@
     "16": "icons/16px.png",
     "32": "icons/32px.png"
   },
-  "permissions": ["storage", "tabs"],
+  "permissions": [
+    "storage",
+    "tabs",
+    "notifications"
+  ],
   "background": {
     "scripts": ["background.js"],
     "type": "module"
